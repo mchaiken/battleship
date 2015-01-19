@@ -18,6 +18,12 @@ void reset_board(char board []){
         x++;
     }
 }
+
+void newGame(){
+    reset_board(your_board);
+    reset_board(opponent_board);
+}
+
 void print_board(char board[]){
     int x=0;
     int y=0;
@@ -34,75 +40,108 @@ void print_board(char board[]){
     }
 }
 
-void newGame(){
-    reset_board(your_board);
-    reset_board(opponent_board);
-}
-
-int check_collisions(char board[], char * start, int increment,int length){
-    int i = ((start[0]-65)*10) +(start[1]-48);
-    while (length<=9 && length>=0 ){
-        if (board[i] == 'O'){
-            printf("Oh no! This would collide with another boat! Try again.\n");
-            return 1;
+int check_collisions (int len, int increment, int i) {
+    while (len) {
+        if (your_board[i] == 'O') {
+            return 0;
         }
-        i+=increment;
-        length--;
+        i = i + increment;
+        len = len - 1;
     }
-    return 0;
-    
-    
-}
-
-int placeShip(char board[], char * start, char * orientation, int length){
-    
-    int i=((start[0]-65)*10) +(start[1]-48);
-    int increment;
-    if (!strcmp(orientation,"up")){
-        increment=-10;
-    }
-    else if (!strcmp(orientation,"down")){
-        increment=10;
-    }
-    else if (!strcmp(orientation,"left")){
-        increment= 1;
-    }
-    else{
-        increment= -1;
-    }
-    if ((i + (length* increment)) > 99 ||(i + (length* increment)) < 0|| length > 10){
-        printf("That goes off the board! %d\n",i + (length* increment));
-        return 0;
-        
-    }
-    else if (check_collisions(board,start,increment,length)){
-        return 0;
-    }
-    while(length){
-        board[i]='O';
-        i+=increment;
-        length--;
-        
-    }
-    print_board(your_board);
     return 1;
 }
 
-int main(){
+int get_i () {
     char start[100];
-    char orientation[100];
-    reset_board(your_board);
-    while(1){
-       /* printf("Start a New Game! To begin, set up your board.\n");
-        printf("To place your ships, simply type the starting location of the ship (ie A0, B7), followed by if the rest of the ship should be moving up down left or right.\n");
-        print_board(your_board);
-        printf("First ship. Length 6\n");
-        printf("Where would you like to place it(ie A0, B2): ");
-        fgets( start, sizeof( start ), stdin );
-        printf("In what direction should the tail go (ie if your start is A5 and you want it to go towards A4, up");
-          fgets( orientation, sizeof( orientation ), stdin );
-        placeShip(your_board,&start[0],&orientation[0], 6);
-    }*/
+    fgets( start, sizeof( start ), stdin );
+    int i=((start[0]-65)*10) + (start[1]-48);
+    if (start[0]<65 || start[0]>74 || start[1]<48 || start[1] > 57) {
+        i = -1;
+    }
+    return i;
+}
+
+void placeShip2 (int len, int increment, int i) {
+    while (len) {
+        your_board[i] = 'O';
+        i = i + increment;
+        len = len - 1;
+    }
+    print_board(your_board);
     
-    return 0;
+}
+
+void placeShip (int len) {
+    char orientation[100];
+    printf("Placing ship of length %d.\n", len);
+    
+    printf("Enter 'H' to place it horizontally, or 'V' to place it vertically: ");
+    fgets(orientation, sizeof(orientation), stdin);
+    char * s1 = orientation;
+    s1 = strsep(&s1,"\n");
+    if (! (!strcmp(s1,"H") || !strcmp(s1,"V") )) {
+        printf("Invalid input. Please try again.\n\n");
+        return placeShip(len);
+    }
+    
+    int increment;
+    int i;
+    
+    //horizontal
+    if (!strcmp(s1, "H")) {
+        increment = 1;
+        printf("Enter the space where you want the left of this ship to be (ie 'D3'): ");
+        i = get_i();
+        if (i == -1) {
+            printf("Invalid input. Please Try again.\n\n");
+            return placeShip(len);
+        }
+        if (i/10 != ((len*increment+i-1)/10)){
+            printf("That goes off the board! Try again.\n\n");
+            return placeShip(len);
+        }
+    }
+    
+    //vertical
+    else if (!strcmp(s1, "V")) {
+        increment = 10;
+        printf("Enter the space where you want the top of this ship to be (ie 'D3'): ");
+        i = get_i();
+        if (i == -1) {
+            printf("Invalid input. Please Try again.\n\n");
+            return placeShip(len);
+        }
+        if ((len*increment+i)/10 > 10){
+            printf("That goes off the board! Try again.\n\n");
+            return placeShip(len);
+        }
+        
+    }
+    if (check_collisions(len, increment,i)) {
+        placeShip2(len, increment,i);
+    }
+    else {
+        printf("That would collide with another ship! Try again.\n\n");
+        return placeShip(len);
+    }
+}
+
+void setBoard () {
+    print_board(your_board);
+    //couldn't find definitively online how many of each piece length there's supposed to be?
+    placeShip(6);
+    placeShip(4);
+    placeShip(4);
+    placeShip(3);
+    placeShip(3);
+    placeShip(2);
+    placeShip(2);
+    placeShip(2);
+    placeShip(2);
+}
+
+int main(){
+    newGame();
+    printf("Start a New Game! To begin, set up your board.\n\n");
+    setBoard();
 }
