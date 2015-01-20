@@ -1,10 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 char your_board [100];
 char opponent_board[100];
 char ship_marker = 'a';
+int socket_id;
+int socket_client;
+
+void initiate_game();
+
+void join_game();
 
 void reset_board( char board[] );
 
@@ -16,7 +25,7 @@ int check_collisions( int len, int increment, int i );
 
 int get_i();
 
-void place_ship_2( int len, int increment, int i );
+void alter_array( int len, int increment, int i );
 
 void place_ship( int len );
 
