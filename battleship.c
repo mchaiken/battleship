@@ -1,60 +1,87 @@
 #include "battleship.h"
-
+#include <unistd.h>
+int socket_client;
+int socket_server;
+int socket_id;
 void initiate_game(){
-    printf( "Initializing Game\n" );
-   
-    //make socket
-    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
-    
-    //bind to an ip address
-    struct sockaddr_in sock;
-    sock.sin_family = AF_INET;
-    sock.sin_port = htons( 24601 );
-    sock.sin_addr.s_addr = INADDR_ANY;
-    
-    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
-    
-    printf( "Waiting for connection\n" );
-    listen( socket_id, 1 ); //wait until it gets a connection
-    
-    socklen_t s;
-    while( 1 ){
-        s = sizeof( sock );
-        socket_client = accept( socket_id, NULL, NULL );
-    }
-    
-    /*while(1){
-        b= read(socket_client, buffer, sizeof(buffer));
-        printf("Received: %s\n");
-    }*/
-    
-    printf( "Connected\n" );
-}
-
-void join_game(){
+    printf("Intiating Connection\n");
     int socket_id;
     char buffer[256];
     int i, b;
     
     //create the socket
-    printf( "creating socket\n" );
-    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
+    socket_id = socket(AF_INET, SOCK_STREAM, 0);
     
-    printf( "binding to port\n" );
+    
+    //bind to port/address
+    struct sockaddr_in listener;
+    listener.sin_family = AF_INET;
+    listener.sin_port = htons(24601);
+    listener.sin_addr.s_addr = INADDR_ANY;
+    printf("Waiting for Connection\n");
+    bind( socket_id, (struct sockaddr *)&listener, sizeof(listener));
+    listen(socket_id, 1);
+    socket_client = accept(socket_id, NULL, NULL);
+    printf("Connected\n");
+}
+
+void join_game(){
+
+    char buffer[256];
+    int i, b;
+    
+    //create the socket
+    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    
+    
     //bind to port/address
     struct sockaddr_in sock;
     sock.sin_family = AF_INET;
-    sock.sin_port = htons( 24601 );
+    sock.sin_port = htons(24601);
     
-    inet_aton( "207.244.82.145", &(sock.sin_addr) );
-    printf( "About to bind\n" );
-    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
-    printf( "Connected\n" );
+    inet_aton( "127.0.0.1", &(sock.sin_addr));
     
-    /*  while(1){
-        printf("Enter message: ");
-        fgets( buffer, sizeof(buffer),stdin);
-        *(strchr(buffer));}*/
+    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
+    i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
+    printf("Connected\n");
+}
+
+int main(){
+    // new_game();
+    //printf("Start a New Game! To begin, set up your board.\n\n");
+    //set_board();
+    
+    printf( "Do you want to join a game, or start a game?\n" );
+    printf( "\t1. Start a game\n\t2. Join a game\n" );
+    
+    char buff[100];
+    int i;
+    fgets( buff, sizeof( buff ), stdin );
+    buff[1] = 0;
+    
+    printf( "Buff: <%s>\n", buff );
+    if(! strcmp(buff,"1") ){
+        printf( "Initiating Game\n" );
+        initiate_game();
+        int i=read(socket_client, buff, sizeof(buff));
+        buff[i/sizeof(char)]=0;
+        printf("Recieved <%s>",buff);
+        printf("Send your Info:");
+        fgets(buff,sizeof(buff),stdin);
+        buff[99]=0;
+        write(socket_client,buff, sizeof(buff));
+    }
+    else if(! strcmp(buff, "2") ){
+        printf("socket_server: %d\n",socket_id);
+        join_game();
+        printf("Send your Info:");
+        fgets(buff,sizeof(buff),stdin);
+        buff[99]=0;
+        write(socket_id,buff, sizeof(buff));
+        int i=read(socket_id, buff, sizeof(buff));
+        buff[i/sizeof(char)]=0;
+        printf("Recieved <%s>",buff);}
+    
 }
 
 //set board to zeros
@@ -189,7 +216,7 @@ void place_ship( int len ){
 
 void set_board (){
     print_board( your_board );
-
+    
     place_ship(6);
     place_ship(4);
     place_ship(4);
@@ -202,25 +229,3 @@ void set_board (){
     place_ship(2);
 }
 
-int main(){
-   // new_game();
-    //printf("Start a New Game! To begin, set up your board.\n\n");
-    //set_board();
-    
-    printf( "Do you want to join a game, or start a game?\n" );
-    printf( "\t1. Start a game\n\t2. Join a game\n" );
-    
-    char buff[100];
-    int i;
-    fgets( buff, sizeof( buff ), stdin );
-    buff[1] = 0;
-    
-    printf( "Buff: <%s>\n", buff );
-    if(! strcmp(buff,"1") ){
-        printf( "Initiating Game\n" );
-        initiate_game();
-    }
-    else if(! strcmp(buff, "2") ){
-        join_game();
-    }
-}
