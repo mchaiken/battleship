@@ -99,7 +99,7 @@ void join_game( char * args){
     sock.sin_family = AF_INET;
     sock.sin_port = htons(24601);
     
-    inet_aton( &args[1], &(sock.sin_addr));
+    inet_aton( args, &(sock.sin_addr));
     
     bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
     i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
