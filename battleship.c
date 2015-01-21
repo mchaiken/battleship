@@ -35,7 +35,10 @@ int main(){
     }
     else if(! strcmp(buff, "2") ){
         printf("socket_server: %d\n",socket_id);
-        join_game(char );
+        printf("enter the IP address you wish to connect to:\n");
+        char ipaddress [100];
+        fgets (ipaddress, sizeof(ipaddress), stdin);
+        join_game(ipaddress);
         my_turn=0;
         printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
@@ -82,7 +85,7 @@ void initiate_game(){
     other_player = socket_client;
 }
 
-void join_game(){
+void join_game( char * args){
 
     char buffer[256];
     int i, b;
@@ -96,7 +99,7 @@ void join_game(){
     sock.sin_family = AF_INET;
     sock.sin_port = htons(24601);
     
-    inet_aton( "127.0.0.1", &(sock.sin_addr));
+    inet_aton( &args[1], &(sock.sin_addr));
     
     bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
     i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
