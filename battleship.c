@@ -25,25 +25,25 @@ int main(){
         printf( "Initiating Game\n" );
         initiate_game();
         my_turn=1;
-        /*int i=read(socket_client, buff, sizeof(buff));
+        int i=read(socket_client, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
         printf("Recieved <%s>",buff);
         printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
         buff[99]=0;
-        write(socket_client,buff, sizeof(buff));*/
+        write(socket_client,buff, sizeof(buff));
     }
     else if(! strcmp(buff, "2") ){
         printf("socket_server: %d\n",socket_id);
-        join_game();
+        join_game(char );
         my_turn=0;
-        /*printf("Send your Info:");
+        printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
         buff[99]=0;
         write(socket_id,buff, sizeof(buff));
-        int i=read(socket_id, buff, sizeof(buff));
+        i=read(socket_id, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);*/
+        printf("Recieved <%s>",buff);
     }
     new_game();
     set_board();
