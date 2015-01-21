@@ -1,8 +1,64 @@
 #include "battleship.h"
 #include <unistd.h>
-int socket_client;
-int socket_server;
-int socket_id;
+
+
+
+
+int main(){
+    // new_game();
+    //printf("Start a New Game! To begin, set up your board.\n\n");
+    //set_board();
+    
+    printf( "Do you want to join a game, or start a game?\n" );
+    printf( "\t1. Start a game\n\t2. Join a game\n" );
+    
+    char buff[100];
+    int i;
+    fgets( buff, sizeof( buff ), stdin );
+    buff[1] = 0;
+    
+    printf( "Buff: <%s>\n", buff );
+    game_over=0;
+    
+
+    if(! strcmp(buff,"1") ){
+        printf( "Initiating Game\n" );
+        initiate_game();
+        my_turn=1;
+        /*int i=read(socket_client, buff, sizeof(buff));
+        buff[i/sizeof(char)]=0;
+        printf("Recieved <%s>",buff);
+        printf("Send your Info:");
+        fgets(buff,sizeof(buff),stdin);
+        buff[99]=0;
+        write(socket_client,buff, sizeof(buff));*/
+    }
+    else if(! strcmp(buff, "2") ){
+        printf("socket_server: %d\n",socket_id);
+        join_game();
+        my_turn=0;
+        /*printf("Send your Info:");
+        fgets(buff,sizeof(buff),stdin);
+        buff[99]=0;
+        write(socket_id,buff, sizeof(buff));
+        int i=read(socket_id, buff, sizeof(buff));
+        buff[i/sizeof(char)]=0;
+        printf("Recieved <%s>",buff);*/
+    }
+    new_game();
+    set_board();
+    while(!game_over){
+        if (my_turn){
+            printf("Other player's board\n");
+            print_board(opponent_board);
+            printf("Where do you want to hit?\n");
+        }
+    }
+    
+    
+}
+
+
 void initiate_game(){
     printf("Intiating Connection\n");
     int socket_id;
@@ -23,6 +79,7 @@ void initiate_game(){
     listen(socket_id, 1);
     socket_client = accept(socket_id, NULL, NULL);
     printf("Connected\n");
+    other_player = socket_client;
 }
 
 void join_game(){
@@ -44,45 +101,9 @@ void join_game(){
     bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
     i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
     printf("Connected\n");
+    other_player = socket_id;
 }
 
-int main(){
-    // new_game();
-    //printf("Start a New Game! To begin, set up your board.\n\n");
-    //set_board();
-    
-    printf( "Do you want to join a game, or start a game?\n" );
-    printf( "\t1. Start a game\n\t2. Join a game\n" );
-    
-    char buff[100];
-    int i;
-    fgets( buff, sizeof( buff ), stdin );
-    buff[1] = 0;
-    
-    printf( "Buff: <%s>\n", buff );
-    if(! strcmp(buff,"1") ){
-        printf( "Initiating Game\n" );
-        initiate_game();
-        int i=read(socket_client, buff, sizeof(buff));
-        buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);
-        printf("Send your Info:");
-        fgets(buff,sizeof(buff),stdin);
-        buff[99]=0;
-        write(socket_client,buff, sizeof(buff));
-    }
-    else if(! strcmp(buff, "2") ){
-        printf("socket_server: %d\n",socket_id);
-        join_game();
-        printf("Send your Info:");
-        fgets(buff,sizeof(buff),stdin);
-        buff[99]=0;
-        write(socket_id,buff, sizeof(buff));
-        int i=read(socket_id, buff, sizeof(buff));
-        buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);}
-    
-}
 
 //set board to zeros
 void reset_board( char board[] ){
