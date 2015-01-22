@@ -111,7 +111,7 @@ void reset_board( char board[] ){
     int y = 0;
     while( x < 10 ){
         while( y < 10 ){
-            board[ (x * 10) + y ] = '-';
+            board[ (x * 10) + y ] = '~';
             y++;
             
         }
@@ -146,7 +146,7 @@ void print_board( char board[] ){
 //place ship in array
 int check_collisions( int len, int increment, int i ){
     while( len ){
-        if( your_board[i] != '-' ){
+        if( your_board[i] != '~' ){
             return 0;
         }
         i = i + increment;
