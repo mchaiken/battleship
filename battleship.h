@@ -33,3 +33,5 @@ void alter_array( int len, int increment, int i );
 void place_ship( int len );
 
 void set_board();
+
+char * clean_input (char * input);

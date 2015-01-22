@@ -4,6 +4,9 @@
 
 int my_boats[6];
 
+
+
+
 int main(){
     // new_game();
     //printf("Start a New Game! To begin, set up your board.\n\n");
@@ -15,8 +18,7 @@ int main(){
     char buff[100];
     int i;
     fgets( buff, sizeof( buff ), stdin );
-    buff[1] = 0;
-    
+    clean_input(buff);
     printf( "Buff: <%s>\n", buff );
     game_over=0;
     
@@ -24,9 +26,12 @@ int main(){
     if(! strcmp(buff,"1") ){
         printf( "Initiating Game\n" );
         initiate_game();
+        
         my_turn=1;
+        
     }
     else if(! strcmp(buff, "2") ){
+        
         printf("socket_server: %d\n",socket_id);
         printf("enter the IP address you wish to connect to:\n");
         char ipaddress [100];
@@ -96,16 +101,24 @@ int main(){
     }
 }
 
+char * clean_input (char * input) {
+    char * s1 = input;
+    s1 = strsep( &s1, "\n" );
+    return s1;
+    
+}
+
 
 
 void initiate_game(){
+    
     printf("Initiating Connection\n");
     int socket_id;
     char buffer[256];
     int i, b;
     
     //create the socket
-    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
     
     
     //bind to port/address
@@ -113,21 +126,23 @@ void initiate_game(){
     listener.sin_family = AF_INET;
     listener.sin_port = htons(24601);
     listener.sin_addr.s_addr = INADDR_ANY;
+    
     printf("Waiting for Connection\n");
-    bind( socket_id, (struct sockaddr *)&listener, sizeof(listener));
-    listen(socket_id, 1);
-    socket_client = accept(socket_id, NULL, NULL);
-    printf("Connected\n");
+    bind( socket_id, (struct sockaddr *)&listener, sizeof(listener) );
+    listen( socket_id, 1 );
+    socket_client = accept( socket_id, NULL, NULL );
+    printf( "Connected\n" );
     other_player = socket_client;
 }
 
-void join_game( char * args){
+
+void join_game( char * args ){
     
     char buffer[256];
     int i, b;
     
     //create the socket
-    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
     
     
     //bind to port/address
@@ -135,11 +150,11 @@ void join_game( char * args){
     sock.sin_family = AF_INET;
     sock.sin_port = htons(24601);
     
-    inet_aton( args, &(sock.sin_addr));
+    inet_aton(args, &(sock.sin_addr) );
     
-    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
-    i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
-    printf("Connected\n");
+    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
+    i = connect( socket_id,(struct sockaddr *)&sock, sizeof(sock) );
+    printf( "Connected\n" );
     other_player = socket_id;
 }
 
@@ -150,7 +165,7 @@ void reset_board( char board[] ){
     int y = 0;
     while( x < 10 ){
         while( y < 10 ){
-            board[ (x * 10) + y ] = '-';
+            board[ (x * 10) + y ] = '~';
             y++;
             
         }
@@ -185,7 +200,7 @@ void print_board( char board[] ){
 //place ship in array
 int check_collisions( int len, int increment, int i ){
     while( len ){
-        if( your_board[i] == 'O' ){
+        if( your_board[i] != '~' ){
             return 0;
         }
         i = i + increment;
@@ -208,7 +223,7 @@ int get_i (char start[]){
 
 void alter_array( int len, int increment, int i ){
     while( len ){
-        your_board[i] = 'O';
+        your_board[i] = ship_marker;
         i = i + increment;
         len = len - 1;
     }
@@ -223,10 +238,8 @@ void place_ship( int len ){
     printf( "Enter 'H' to place it horizontally, or 'V' to place it vertically: " );
     
     fgets( orientation, sizeof(orientation), stdin );
-    char * s1 = orientation;
-    
-    s1 = strsep( &s1, "\n" );
-    if (! (!strcmp(s1,"H") || !strcmp(s1,"V") ) ){
+    clean_input(orientation);
+    if (! (!strcmp(orientation,"H") || !strcmp(orientation,"V") ) ){
         printf( "Invalid input. Please try again.\n\n" );
         return place_ship( len );
     }
@@ -236,7 +249,7 @@ void place_ship( int len ){
     int i;
     
     //horizontal
-    if (! strcmp(s1, "H") ){
+    if (! strcmp(orientation, "H") ){
         increment = 1;
         printf( "Enter the space where you want the left of this ship to be (ie 'D3'): " );
         fgets( start, sizeof( start ), stdin );
@@ -252,7 +265,7 @@ void place_ship( int len ){
     }
     
     //vertical
-    else if(! strcmp(s1, "V") ){
+    else if(! strcmp(orientation, "V") ){
         increment = 10;
         printf( "Enter the space where you want the top of this ship to be (ie 'D3'): " );
         fgets( start, sizeof( start ), stdin );
@@ -276,7 +289,7 @@ void place_ship( int len ){
     }
 }
 
-void set_board (){
+void set_board () {
     print_board( your_board );
     
     place_ship(6);
