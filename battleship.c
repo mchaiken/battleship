@@ -26,12 +26,12 @@ int main(){
         initiate_game();
         my_turn=1;
         int i=read(socket_client, buff, sizeof(buff));
-        buff[i/sizeof(char)]=0;
+        /*buff[i/sizeof(char)]=0;
         printf("Recieved <%s>",buff);
         printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
         buff[99]=0;
-        write(socket_client,buff, sizeof(buff));
+        write(socket_client,buff, sizeof(buff));*/
     }
     else if(! strcmp(buff, "2") ){
         printf("socket_server: %d\n",socket_id);
@@ -40,13 +40,13 @@ int main(){
         fgets (ipaddress, sizeof(ipaddress), stdin);
         join_game(ipaddress);
         my_turn=0;
-        printf("Send your Info:");
+        /*printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
         buff[99]=0;
         write(socket_id,buff, sizeof(buff));
         i=read(socket_id, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);
+        printf("Recieved <%s>",buff);*/
     }
     new_game();
     set_board();
@@ -242,14 +242,32 @@ void set_board (){
     print_board( your_board );
     
     place_ship(6);
+    //place_ship(4);
     place_ship(4);
-    place_ship(4);
+    //place_ship(3);
     place_ship(3);
-    place_ship(3);
-    place_ship(3);
+    //place_ship(3);
     place_ship(2);
+    /*place_ship(2);
     place_ship(2);
-    place_ship(2);
-    place_ship(2);
+    place_ship(2);*/
+    printf("board set\n");
+    int i;
+    char buff[100];
+    write(other_player,"set", sizeof(buff));
+    buff[99]=0;
+    i=read(socket_id, buff, sizeof(buff));
+    buff[i/sizeof(char)]=0;
+    if (strcmp(buff,"set")){
+        printf("Other baord set\n");
+        //return 1;
+    }
+    else{
+        printf("other board not set\n");
+        //return 0;
+    }
+    
+
+    
 }
 
