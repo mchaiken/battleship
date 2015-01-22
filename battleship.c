@@ -34,7 +34,7 @@ int main(){
         fgets(buff,sizeof(buff),stdin);
         clean_input(buff);
         write(socket_client,buff, sizeof(buff));
-    
+    }
     else if(! strcmp(buff, "2") ){
 
         printf("socket_server: %d\n",socket_id);
