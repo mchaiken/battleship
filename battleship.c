@@ -3,6 +3,11 @@
 
 
 
+char * clean_input (char * input) {
+    char * s1 = input;
+    s1 = strsep( &s1, "\n" );
+    return s1;
+}
 
 int main(){
     // new_game();
@@ -15,8 +20,7 @@ int main(){
     char buff[100];
     int i;
     fgets( buff, sizeof( buff ), stdin );
-    buff[1] = 0;
-    
+    clean_input(buff);
     printf( "Buff: <%s>\n", buff );
     game_over=0;
     
@@ -27,10 +31,10 @@ int main(){
         my_turn=1;
         int i=read(socket_client, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);
+        printf("Recieved <%s>\n",buff);
         printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
-        buff[99]=0;
+        clean_input(buff);
         write(socket_client,buff, sizeof(buff));
     }
     else if(! strcmp(buff, "2") ){
@@ -42,11 +46,11 @@ int main(){
         my_turn=0;
         printf("Send your Info:");
         fgets(buff,sizeof(buff),stdin);
-        buff[99]=0;
+        clean_input(buff);
         write(socket_id,buff, sizeof(buff));
         i=read(socket_id, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
-        printf("Recieved <%s>",buff);
+        printf("Recieved <%s>\n",buff);
     }
     new_game();
     set_board();
@@ -188,10 +192,8 @@ void place_ship( int len ){
     printf( "Enter 'H' to place it horizontally, or 'V' to place it vertically: " );
     
     fgets( orientation, sizeof(orientation), stdin );
-    char * s1 = orientation;
-    
-    s1 = strsep( &s1, "\n" );
-    if (! (!strcmp(s1,"H") || !strcmp(s1,"V") ) ){
+    clean_input(orientation);
+    if (! (!strcmp(orientation,"H") || !strcmp(orientation,"V") ) ){
         printf( "Invalid input. Please try again.\n\n" );
         return place_ship( len );
     }
@@ -200,7 +202,7 @@ void place_ship( int len ){
     int i;
     
     //horizontal
-    if (! strcmp(s1, "H") ){
+    if (! strcmp(orientation, "H") ){
         increment = 1;
         printf( "Enter the space where you want the left of this ship to be (ie 'D3'): " );
         i = get_i();
@@ -215,7 +217,7 @@ void place_ship( int len ){
     }
     
     //vertical
-    else if(! strcmp(s1, "V") ){
+    else if(! strcmp(orientation, "V") ){
         increment = 10;
         printf( "Enter the space where you want the top of this ship to be (ie 'D3'): " );
         i = get_i();
