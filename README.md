@@ -1,2 +1,3 @@
-# battleship
-BATTLESHIP in C with Networking maybe?
+Battleship 
+==========
+#### Jenny Baran, Miranda Chaiken, & Nadia Saleh
