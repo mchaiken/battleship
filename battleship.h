@@ -26,7 +26,7 @@ void print_board( char board[] );
 
 int check_collisions( int len, int increment, int i );
 
-int get_i();
+int get_i(char start[]);
 
 void alter_array( int len, int increment, int i );
 
