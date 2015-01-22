@@ -3,11 +3,13 @@
 
 
 
+
 char * clean_input (char * input) {
     char * s1 = input;
     s1 = strsep( &s1, "\n" );
     return s1;
 }
+
 
 int main(){
     // new_game();
@@ -24,10 +26,10 @@ int main(){
     printf( "Buff: <%s>\n", buff );
     game_over=0;
     
-
-    if(! strcmp(buff,"1") ){
+    if(! strcmp( buff, "1" ) ){
         printf( "Initiating Game\n" );
         initiate_game();
+        
         my_turn=1;
         int i=read(socket_client, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
@@ -36,8 +38,9 @@ int main(){
         fgets(buff,sizeof(buff),stdin);
         clean_input(buff);
         write(socket_client,buff, sizeof(buff));
-    }
+    
     else if(! strcmp(buff, "2") ){
+
         printf("socket_server: %d\n",socket_id);
         printf("enter the IP address you wish to connect to:\n");
         char ipaddress [100];
@@ -51,29 +54,28 @@ int main(){
         i=read(socket_id, buff, sizeof(buff));
         buff[i/sizeof(char)]=0;
         printf("Recieved <%s>\n",buff);
+
     }
     new_game();
     set_board();
-    while(!game_over){
-        if (my_turn){
-            printf("Other player's board\n");
-            print_board(opponent_board);
-            printf("Where do you want to hit?\n");
+    while( !game_over ){
+        if( my_turn ){
+            printf( "Other player's board\n" );
+            print_board( opponent_board );
+            printf( "Where do you want to hit?\n" );
         }
     }
-    
-    
 }
 
 
 void initiate_game(){
-    printf("Intiating Connection\n");
+    printf( "Intiating Connection\n" );
     int socket_id;
     char buffer[256];
     int i, b;
     
     //create the socket
-    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
     
     
     //bind to port/address
@@ -81,33 +83,34 @@ void initiate_game(){
     listener.sin_family = AF_INET;
     listener.sin_port = htons(24601);
     listener.sin_addr.s_addr = INADDR_ANY;
+    
     printf("Waiting for Connection\n");
-    bind( socket_id, (struct sockaddr *)&listener, sizeof(listener));
-    listen(socket_id, 1);
-    socket_client = accept(socket_id, NULL, NULL);
-    printf("Connected\n");
+    bind( socket_id, (struct sockaddr *)&listener, sizeof(listener) );
+    listen( socket_id, 1 );
+    socket_client = accept( socket_id, NULL, NULL );
+    printf( "Connected\n" );
     other_player = socket_client;
 }
 
-void join_game( char * args){
+void join_game( char * args ){
 
     char buffer[256];
     int i, b;
     
     //create the socket
-    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    socket_id = socket( AF_INET, SOCK_STREAM, 0 );
     
     
     //bind to port/address
     struct sockaddr_in sock;
     sock.sin_family = AF_INET;
     sock.sin_port = htons(24601);
+
+    inet_aton( &args[1], &(sock.sin_addr) );
     
-    inet_aton( args, &(sock.sin_addr));
-    
-    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock));
-    i=connect(socket_id,(struct sockaddr *)&sock, sizeof(sock));
-    printf("Connected\n");
+    bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
+    i = connect( socket_id,(struct sockaddr *)&sock, sizeof(sock) );
+    printf( "Connected\n" );
     other_player = socket_id;
 }
 
@@ -118,7 +121,7 @@ void reset_board( char board[] ){
     int y = 0;
     while( x < 10 ){
         while( y < 10 ){
-            board[ (x * 10) + y ] = '-';
+            board[ (x * 10) + y ] = '~';
             y++;
             
         }
@@ -153,7 +156,7 @@ void print_board( char board[] ){
 //place ship in array
 int check_collisions( int len, int increment, int i ){
     while( len ){
-        if( your_board[i] == 'O' ){
+        if( your_board[i] != '~' ){
             return 0;
         }
         i = i + increment;
@@ -177,7 +180,7 @@ int get_i (){
 
 void alter_array( int len, int increment, int i ){
     while( len ){
-        your_board[i] = 'O';
+        your_board[i] = ship_marker;
         i = i + increment;
         len = len - 1;
     }
@@ -240,18 +243,36 @@ void place_ship( int len ){
     }
 }
 
-void set_board (){
+void set_board () {
     print_board( your_board );
     
     place_ship(6);
+    //place_ship(4);
     place_ship(4);
-    place_ship(4);
+    //place_ship(3);
     place_ship(3);
-    place_ship(3);
-    place_ship(3);
+    //place_ship(3);
     place_ship(2);
+    /*place_ship(2);
     place_ship(2);
-    place_ship(2);
-    place_ship(2);
+    place_ship(2);*/
+    printf("board set\n");
+    int i;
+    char buff[100];
+    write(other_player,"set", sizeof(buff));
+    buff[99]=0;
+    i=read(socket_id, buff, sizeof(buff));
+    buff[i/sizeof(char)]=0;
+    if (strcmp(buff,"set")){
+        printf("Other baord set\n");
+        //return 1;
+    }
+    else{
+        printf("other board not set\n");
+        //return 0;
+    }
+    
+
+    
 }
 
