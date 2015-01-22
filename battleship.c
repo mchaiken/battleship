@@ -4,11 +4,7 @@
 
 
 
-char * clean_input (char * input) {
-    char * s1 = input;
-    s1 = strsep( &s1, "\n" );
-    return s1;
-}
+
 
 
 int main(){
@@ -65,6 +61,12 @@ int main(){
             printf( "Where do you want to hit?\n" );
         }
     }
+}
+    
+char * clean_input (char * input) {
+    char * s1 = input;
+    s1 = strsep( &s1, "\n" );
+    return s1;
 }
 
 
