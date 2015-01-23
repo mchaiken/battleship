@@ -7,18 +7,6 @@ int boats_left;
 int other_player;
 
 
-void clear_window() {
-    int f = fork();
-    if (!f) {
-        execlp("clear", "clear", NULL);
-        exit(0);
-    }
-    else {
-        wait(&f);
-        f = 0;
-    }
-}
-
 
 int main(){
     // new_game();
@@ -167,7 +155,7 @@ void initiate_game(){
     bind( socket_id, (struct sockaddr *)&listener, sizeof(listener) );
     listen( socket_id, 1 );
     socket_client = accept( socket_id, NULL, NULL );
-    clear_window();
+    system("clear");
     printf( "Connected\n" );
     other_player = socket_client;
     //printf("other player:%d\n",other_player);
@@ -195,7 +183,7 @@ void join_game( char * args ){
     //printf( "Connected\n" );
     other_player = socket_id;
     //printf("other player:%d\n",other_player);
-    clear_window();
+    system("clear");
 }
 
 
@@ -270,7 +258,7 @@ void alter_array( int len, int increment, int i ){
     }
     ship_marker++;
     
-    clear_window();
+    system("clear");
     print_board( your_board );
 }
 
@@ -356,7 +344,7 @@ void set_board () {
     i=read(other_player, buff, sizeof(buff));
     buff[i/sizeof(char)]=0;
     if (!strcmp(buff,"set")){
-        clear_window();
+        system("clear");
         printf("Other baord set\n");
         //return 1;
     }
