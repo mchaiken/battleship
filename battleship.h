@@ -10,7 +10,7 @@ char opponent_board[100];
 char ship_marker = 'a';
 int socket_id;
 int socket_client;
-int other_player;
+
 int my_turn;
 int game_over;
 

@@ -4,7 +4,7 @@
 
 int my_boats[6];
 
-
+int other_player;
 
 
 int main(){
@@ -79,15 +79,17 @@ int main(){
             int hit= get_i(recieved);
             if (your_board[hit] == '~'){
                 write(other_player,"miss",sizeof("miss"));
-                //your_board[i]='.';
+                your_board[i]='o';
                 printf("They missed!\n");
                 my_turn = !my_turn;
             }
             else{
-                my_boats[your_board[hit]-65]-=1;
+                my_boats[your_board[hit]-65]=my_boats[your_board[hit]-65]-1;
                 if(my_boats[your_board[hit]-65]){
+                    printf("Other_Player:%d\n",other_player);
                     write(other_player,"hit",sizeof("hit"));
                     printf("They got a hit!\n");
+                    
                 }
                 else{
                     write(other_player,"fatal",sizeof("fatal"));
@@ -133,6 +135,7 @@ void initiate_game(){
     socket_client = accept( socket_id, NULL, NULL );
     printf( "Connected\n" );
     other_player = socket_client;
+    printf("other player:%d\n",other_player);
 }
 
 
@@ -156,6 +159,7 @@ void join_game( char * args ){
     i = connect( socket_id,(struct sockaddr *)&sock, sizeof(sock) );
     printf( "Connected\n" );
     other_player = socket_id;
+    printf("other player:%d\n",other_player);
 }
 
 
@@ -227,6 +231,7 @@ void alter_array( int len, int increment, int i ){
         i = i + increment;
         len = len - 1;
     }
+    ship_marker++;
     
     print_board( your_board );
 }
@@ -291,7 +296,8 @@ void place_ship( int len ){
 
 void set_board () {
     print_board( your_board );
-    
+    my_boats[0]=6;
+    my_boats[1]=4;
     place_ship(6);
     //place_ship(4);
     place_ship(4);
