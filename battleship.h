@@ -5,18 +5,21 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-char your_board [100];
+char your_board[100];
 char opponent_board[100];
 char ship_marker = 'a';
 int socket_id;
 int socket_client;
-
 int my_turn;
 int game_over;
+int my_boats[6];
+int other_player;
+
+char * clean_input ( char * input );
 
 void initiate_game();
 
-void join_game();
+void join_game( char * args );
 
 void reset_board( char board[] );
 
@@ -26,12 +29,10 @@ void print_board( char board[] );
 
 int check_collisions( int len, int increment, int i );
 
-int get_i(char start[]);
+int get_i( char start[] );
 
 void alter_array( int len, int increment, int i );
 
 void place_ship( int len );
 
 void set_board();
-
-char * clean_input (char * input);
