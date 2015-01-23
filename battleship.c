@@ -52,6 +52,7 @@ int main(){
             //buff=&clean(buff);
             write(other_player,buff,sizeof(buff));
             system("clear");
+            
             char response[100];
             int i= read(other_player,response,sizeof(response));
             response[i/sizeof(char)]=0;
