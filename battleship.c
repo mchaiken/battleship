@@ -33,14 +33,17 @@ int main(){
     
     new_game();
     set_board();
+
     while( !game_over ){
         if( my_turn ){
             printf( "Other player's board\n" );
             print_board( opponent_board );
+            
             printf( "Where do you want to hit?\n" );
             fgets( buff,sizeof(buff),stdin );
             //buff=&clean(buff);
             write( other_player,buff,sizeof(buff) );
+            
             char response[100];
             int i = read( other_player, response, sizeof(response) );
             response[ i/sizeof(char) ] = 0;
@@ -52,6 +55,11 @@ int main(){
             else if(! strcmp(response,"fatal") ){
                 opponent_board[hit] = 'X';
                 printf( "You sunk a ship!\n" );
+            }
+            else if(!strcmp(response,"gameover")){
+                opponent_board[hit]= 'X';
+                printf("You Won!\n");
+                game_over=1;
             }
             else{
                 opponent_board[hit] = 'O';
@@ -74,17 +82,31 @@ int main(){
                 my_turn = !my_turn;
             }
             else{
-                my_boats[ your_board[hit] - 65 ] = my_boats[ your_board[hit] - 65 ] - 1;
-                if( my_boats[ your_board[hit] - 65 ] ){
+                my_boats[ your_board[hit] - 97 ] = my_boats[ your_board[hit] - 97 ] - 1;
+                
+                
+                //printf("My boats [%d]=%d\n",your_board[hit]-97,my_boats[your_board[hit]-65]);
+                if( my_boats[ your_board[hit] - 97 ] ){
                     printf( "Other_Player:%d\n", other_player );
+                    your_board[hit] = 'o';
                     write( other_player, "hit", sizeof("hit") );
                     printf( "They got a hit!\n" );
                 }
                 else{
-                    write( other_player, "fatal", sizeof("fatal") );
                     printf( "They sunk your boat!\n" );
+                    your_board[hit] = 'o';
+                    boats_left -= 1;
+                    if( !boats_left ){
+                        printf( "You Lost!\n" );
+                        write( other_player, "gameover", sizeof("gameover") );
+                        game_over = 1;
+                    }
+                    else{
+                        write( other_player, "fatal", sizeof("fatal") );
+                    }
                 }
             }
+            print_board(your_board);
         }
     }
 }
@@ -163,6 +185,7 @@ void new_game(){
 
 //print board
 void print_board( char board[] ){
+    //system("clear");
     int x = 0;
     int y = 0;
     printf( "  0 1 2 3 4 5 6 7 8 9 \n" );
@@ -278,6 +301,7 @@ void set_board() {
     place_ship(6);
     //place_ship(4);
     place_ship(4);
+    boats_left=2;
     //place_ship(3);
     //place_ship(3);
     //place_ship(3);
