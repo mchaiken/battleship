@@ -45,10 +45,13 @@ int main(){
         if (my_turn){
             printf("Other player's board\n");
             
+            print_board(opponent_board);
             printf("Where do you want to hit?\n");
+           
             fgets(buff,sizeof(buff),stdin);
             //buff=&clean(buff);
             write(other_player,buff,sizeof(buff));
+            system("clear");
             char response[100];
             int i= read(other_player,response,sizeof(response));
             response[i/sizeof(char)]=0;
@@ -71,15 +74,15 @@ int main(){
                 printf("All you hit was a seagull :(\n");
                 my_turn=!my_turn;
             }
-            
-            print_board(opponent_board);
         }
         else{
             
             printf("Other player is playing\n");
+          
             char recieved[100];
             int i = read(other_player,recieved,sizeof(recieved));
             recieved[i/sizeof(char)-1]=0;
+            system("clear");
             printf("They hit: %s\n",recieved);
             int hit= get_i(recieved);
             if (your_board[hit] == '~'){
@@ -89,7 +92,7 @@ int main(){
             }
             else{
                 my_boats[your_board[hit]-97]=my_boats[your_board[hit]-97]-1;
-                
+                print_board(your_board);
                 //printf("My boats [%d]=%d\n",your_board[hit]-97,my_boats[your_board[hit]-65]);
                 if(my_boats[your_board[hit]-97]){
                     printf("Other_Player:%d\n",other_player);
@@ -115,7 +118,7 @@ int main(){
                 
             }
             
-            print_board(your_board);
+            
         }
     }
 }
@@ -203,7 +206,6 @@ void new_game(){
 
 //print board
 void print_board( char board[] ){
-    //system("clear");
     int x = 0;
     int y = 0;
     printf( "  0 1 2 3 4 5 6 7 8 9 \n" );
@@ -313,11 +315,15 @@ void place_ship( int len ){
 }
 
 void set_board () {
+    system("clear");
     print_board( your_board );
     my_boats[0]=6;
     my_boats[1]=4;
+ 
     place_ship(6);
     //place_ship(4);
+    system("clear");
+     print_board( your_board );
     place_ship(4);
     boats_left=2;
     //place_ship(3);
