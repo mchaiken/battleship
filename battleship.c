@@ -13,8 +13,7 @@ int main(){
     int i;
     fgets( buff, sizeof( buff ), stdin );
     clean_input(buff);
-    printf( "Buff: <%s>\n", buff );
-    game_over = 0;
+    //printf( "Buff: <%s>\n", buff );
     
     if(! strcmp(buff,"1") ){
         printf( "Initiating Game\n" );
@@ -23,7 +22,8 @@ int main(){
         my_turn = 1;
     }
     else if(! strcmp(buff, "2") ){
-        printf( "socket_server: %d\n",socket_id );
+
+        //printf( "socket_server: %d\n",socket_id );
         printf( "enter the IP address you wish to connect to:\n" );
         char ipaddress[100];
         fgets( ipaddress, sizeof(ipaddress), stdin );
@@ -36,6 +36,7 @@ int main(){
 
     while( !game_over ){
         if( my_turn ){
+            printf("\n\nYour Turn!");
             printf( "Other player's board\n" );
             print_board( opponent_board );
             
@@ -69,7 +70,7 @@ int main(){
         }
         else{
             print_board( your_board );
-            printf( "Other player is playing\n" );
+            printf( "\n\n\nOther player is playing...\n" );
             char recieved[100];
             int i = read( other_player, recieved, sizeof(recieved) );
             recieved[ i/sizeof(char) - 1 ] = 0;
@@ -83,7 +84,6 @@ int main(){
             }
             else{
                 my_boats[ your_board[hit] - 97 ] = my_boats[ your_board[hit] - 97 ] - 1;
-                
                 
                 //printf("My boats [%d]=%d\n",your_board[hit]-97,my_boats[your_board[hit]-65]);
                 if( my_boats[ your_board[hit] - 97 ] ){
@@ -118,7 +118,7 @@ char * clean_input (char * input) {
 }
 
 void initiate_game(){
-    printf( "Initiating Connection\n" );
+    //printf( "Initiating Connection\n" );
     int socket_id;
     char buffer[256];
     int i, b;
@@ -136,9 +136,10 @@ void initiate_game(){
     bind( socket_id, (struct sockaddr *)&listener, sizeof(listener) );
     listen( socket_id, 1 );
     socket_client = accept( socket_id, NULL, NULL );
+    system("clear");
     printf( "Connected\n" );
     other_player = socket_client;
-    printf( "other player:%d\n",other_player );
+    //printf( "other player:%d\n",other_player );
 }
 
 void join_game( char * args ){
@@ -156,10 +157,12 @@ void join_game( char * args ){
     inet_aton( args, &(sock.sin_addr) );
     
     bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
+
     i = connect( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
-    printf( "Connected\n" );
+    //printf( "Connected\n" );
     other_player = socket_id;
-    printf( "other player:%d\n",other_player );
+    //printf( "other player:%d\n",other_player );
+    system( "clear" );
 }
 
 //set board to zeros
@@ -231,6 +234,7 @@ void alter_array( int len, int increment, int i ){
     }
     ship_marker++;
     
+    system("clear");
     print_board( your_board );
 }
 
@@ -314,13 +318,14 @@ void set_board() {
     
     int i;
     char buff[100];
-    
+
     write( other_player, "set", sizeof(buff) );
     buff[99] = 0;
     printf( "Waiting...\n" );
     i = read( other_player, buff, sizeof(buff) );
     buff[ i/sizeof(char) ] = 0;
     if (! strcmp(buff,"set") ){
+        system( "clear" );
         printf( "Other board set\n" );
         //return 1;
     }
