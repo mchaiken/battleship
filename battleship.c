@@ -38,31 +38,43 @@ int main(){
             printf( "\nWhere do you want to hit? " );
             
             fgets( buff, sizeof(buff), stdin );
-            write( other_player, buff, sizeof(buff) );
-            system( "clear" );
             
-            
-            char response[100];
-            int i = read( other_player, response, sizeof(response) );
-            response[ i/sizeof(char) ] = 0;
-            int hit = get_i( buff );
-            if(! strcmp(response, "hit") ){
-                opponent_board[hit] = 'X';
-                printf( "You got a hit! " );
-            }
-            else if(! strcmp(response, "fatal") ){
-                opponent_board[hit] = 'X';
-                printf( "You sunk a ship! " );
-            }
-            else if(! strcmp(response, "gameover") ){
-                opponent_board[hit] = 'X';
-                printf( "You won!\n\n\n" );
-                game_over = 1;
+            int i;
+            i = get_i( start );
+            if( i == -1 ){
+                printf( "Invalid input. Please try again.\n\n" );
             }
             else{
-                opponent_board[hit] = 'O';
-                printf( "All you hit was a seagull... " );
-                my_turn = !my_turn;
+                if( opponent_board[i] == '~' ){ //not tried yet
+                    write( other_player, buff, sizeof(buff) );
+                    system( "clear" );
+                    
+                    char response[100];
+                    int i = read( other_player, response, sizeof(response) );
+                    response[ i/sizeof(char) ] = 0;
+                    int hit = get_i( buff );
+                    if(! strcmp(response, "hit") ){
+                        opponent_board[hit] = 'X';
+                        printf( "You got a hit! " );
+                    }
+                    else if(! strcmp(response, "fatal") ){
+                        opponent_board[hit] = 'X';
+                        printf( "You sunk a ship! " );
+                    }
+                    else if(! strcmp(response, "gameover") ){
+                        opponent_board[hit] = 'X';
+                        printf( "You won!\n\n\n" );
+                        game_over = 1;
+                    }
+                    else{
+                        opponent_board[hit] = 'O';
+                        printf( "All you hit was a seagull... " );
+                        my_turn = !my_turn;
+                    }
+                }
+                else{ //already tried
+                    printf( "You've already fired on this spot.\n\n" );
+                }
             }
         }
         else{
