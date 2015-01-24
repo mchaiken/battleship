@@ -291,7 +291,7 @@ void place_ship( int len ){
     }
     else {
         printf( "That would collide with another ship! Try again.\n\n" );
-        return place_ship(len);
+        return place_ship( len );
     }
 }
 
@@ -303,13 +303,15 @@ void set_board () {
     my_boats[1] = 4;
     
     place_ship(6);
-    //place_ship(4);
     system( "clear" );
     print_board( your_board );
     place_ship(4);
+    system( "clear" );
+    print_board( your_board );
     
     boats_left = 2;
-    /*place_ship(3);
+    /*place_ship(4);
+     place_ship(3);
      place_ship(3);
      place_ship(3);
      place_ship(2);
