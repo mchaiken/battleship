@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -12,8 +13,9 @@ int socket_id;
 int socket_client;
 int my_turn;
 int game_over;
-int my_boats[6];
+int my_boats[6]; //int my_boats[6] = [ 6, 4, 4, 3, 3, 3, 2, 2, 2, 2 ];
 int other_player;
+int boats_left; //int boats_left = 10;
 
 char * clean_input ( char * input );
 
