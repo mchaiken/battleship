@@ -1,6 +1,6 @@
 #include "battleship.h"
 #include <unistd.h>
-
+int boats_left;
 int main(){
     // new_game();
     //printf("Start a New Game! To begin, set up your board.\n\n");
@@ -22,7 +22,7 @@ int main(){
         my_turn = 1;
     }
     else if(! strcmp(buff, "2") ){
-
+        
         //printf( "socket_server: %d\n",socket_id );
         printf( "enter the IP address you wish to connect to:\n" );
         char ipaddress[100];
@@ -33,20 +33,19 @@ int main(){
     
     new_game();
     set_board();
-
+    
     while( !game_over ){
         if( my_turn ){
-            printf("\n\nYour Turn!");
-            printf( "Other player's board\n" );
-            print_board( opponent_board );
+            printf("\nYour Turn!\n");
+            printf( "Other player's board\n");
             print_board(opponent_board);
-            printf("Where do you want to hit?\n");
-           
+            printf("Where do you want to hit? ");
+            
             fgets(buff,sizeof(buff),stdin);
-            //buff=&clean(buff);
+            //buff=&clean_input(buff);
             write(other_player,buff,sizeof(buff));
             system("clear");
-
+            
             
             char response[100];
             int i = read( other_player, response, sizeof(response) );
@@ -72,12 +71,16 @@ int main(){
             }
         }
         else{
+            printf("Your Board:\n");
+            print_board(your_board);
             printf("Other player is playing\n");
-          
+            
             char recieved[100];
             int i = read(other_player,recieved,sizeof(recieved));
-            recieved[i/sizeof(char)-1]=0;
             system("clear");
+            recieved[i/sizeof(char)-1]=0;
+
+            print_board(your_board);
             printf("They hit: %s\n",recieved);
             int hit= get_i(recieved);
             if (your_board[hit] == '~'){
@@ -87,14 +90,16 @@ int main(){
             }
             else{
                 my_boats[your_board[hit]-97]=my_boats[your_board[hit]-97]-1;
-                print_board(your_board);
-                    your_board[hit] = 'o';
+                printf("Left to kill: %d\n",my_boats[your_board[hit]-97]);
+                
+                if ( my_boats[your_board[hit]-97] != 0 ){
+                    
                     write( other_player, "hit", sizeof("hit") );
                     printf( "They got a hit!\n" );
                 }
                 else{
                     printf( "They sunk your boat!\n" );
-                    your_board[hit] = 'o';
+                    
                     boats_left -= 1;
                     if( !boats_left ){
                         printf( "You Lost!\n" );
@@ -104,11 +109,14 @@ int main(){
                     else{
                         write( other_player, "fatal", sizeof("fatal") );
                     }
+                    
                 }
+                your_board[hit] = 'o';
             }
         }
     }
 }
+
 
 char * clean_input (char * input) {
     char * s1 = input;
@@ -135,7 +143,7 @@ void initiate_game(){
     bind( socket_id, (struct sockaddr *)&listener, sizeof(listener) );
     listen( socket_id, 1 );
     socket_client = accept( socket_id, NULL, NULL );
-    system("clear");
+    //system("clear");
     printf( "Connected\n" );
     other_player = socket_client;
     //printf( "other player:%d\n",other_player );
@@ -156,12 +164,12 @@ void join_game( char * args ){
     inet_aton( args, &(sock.sin_addr) );
     
     bind( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
-
+    
     i = connect( socket_id, (struct sockaddr *)&sock, sizeof(sock) );
     //printf( "Connected\n" );
     other_player = socket_id;
     //printf( "other player:%d\n",other_player );
-    system( "clear" );
+    //system( "clear" );
 }
 
 //set board to zeros
@@ -232,8 +240,8 @@ void alter_array( int len, int increment, int i ){
     }
     ship_marker++;
     
-    system("clear");
-    print_board( your_board );
+    //system("clear");
+    //print_board( your_board );
 }
 
 void place_ship( int len ){
@@ -303,7 +311,7 @@ void set_board () {
     place_ship(6);
     //place_ship(4);
     system("clear");
-     print_board( your_board );
+    print_board( your_board );
     place_ship(4);
     boats_left=2;
     //place_ship(3);
@@ -318,14 +326,14 @@ void set_board () {
     
     int i;
     char buff[100];
-
+    
     write( other_player, "set", sizeof(buff) );
     buff[99] = 0;
     printf( "Waiting...\n" );
     i = read( other_player, buff, sizeof(buff) );
     buff[ i/sizeof(char) ] = 0;
     if (! strcmp(buff,"set") ){
-        system( "clear" );
+        //system( "clear" );
         printf( "Other board set\n" );
         //return 1;
     }
@@ -333,4 +341,5 @@ void set_board () {
         printf( "Other board not set" );
         //return 0;
     }
+    system("clear");
 }
