@@ -40,9 +40,10 @@ int main(){
             fgets( buff, sizeof(buff), stdin );
             
             int i;
-            i = get_i( start );
+            i = get_i( buff );
             if( i == -1 ){
-                printf( "Invalid input. Please try again.\n\n" );
+                system("clear");
+                printf( "Invalid input. Please try again. " );
             }
             else{
                 if( opponent_board[i] == '~' ){ //not tried yet
