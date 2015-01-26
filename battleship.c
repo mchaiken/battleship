@@ -97,6 +97,7 @@ int main(){
                 write( other_player, "miss", sizeof("miss") );
                 printf( "they missed! " );
                 my_turn = !my_turn;
+                your_board[hit] = "O";
             }
             else{
                 my_boats[ your_board[hit] - 97 ] = my_boats[ your_board[hit] - 97 ] - 1;
