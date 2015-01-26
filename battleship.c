@@ -57,10 +57,12 @@ int main(){
                     if(! strcmp(response, "hit") ){
                         opponent_board[hit] = 'X';
                         printf( "You got a hit! " );
+                        my_turn = !my_turn;
                     }
                     else if(! strcmp(response, "fatal") ){
                         opponent_board[hit] = 'X';
                         printf( "You sunk a ship! " );
+                        my_turn = !my_turn;
                     }
                     else if(! strcmp(response, "gameover") ){
                         opponent_board[hit] = 'X';
@@ -104,6 +106,7 @@ int main(){
                     
                     write( other_player, "hit", sizeof("hit") );
                     printf( "hit your ship! " );
+                    my_turn = !my_turn;
                 }
                 else{
                     printf( "they sunk your ship! " );
@@ -116,6 +119,7 @@ int main(){
                     }
                     else{
                         write( other_player, "fatal", sizeof("fatal") );
+                        my_turn = !my_turn;
                     }
                     
                 }
@@ -318,27 +322,39 @@ void set_board () {
     
     my_boats[0] = 6;
     my_boats[1] = 4;
+    my_boats[2] = 4;
+    my_boats[3] = 3;
+    my_boats[4] = 2;
     
     place_ship(6);
     system( "clear" );
     printf( "Ship placed.\n\n" );
     printf( "Your board:\n" );
     print_board( your_board );
+    
     place_ship(4);
     system( "clear" );
     printf( "Ship placed.\n\n" );
     printf( "Your board:\n" );
     print_board( your_board );
     
-    boats_left = 2;
-    /*place_ship(4);
-     place_ship(3);
-     place_ship(3);
-     place_ship(3);
-     place_ship(2);
-     place_ship(2);
-     place_ship(2);
-     place_ship(2);*/
+    place_ship(4);
+    system( "clear" );
+    printf( "Ship placed.\n\n" );
+    printf( "Your board:\n" );
+    print_board( your_board );
+    
+    place_ship(3);
+    system( "clear" );
+    printf( "Ship placed.\n\n" );
+    printf( "Your board:\n" );
+    print_board( your_board );
+    
+    place_ship(2);
+    system( "clear" );
+    printf( "Ship placed.\n\n" );
+    printf( "Your board:\n" );
+    print_board( your_board );
     
     //printf( "board set\n" );
     
@@ -356,7 +372,7 @@ void set_board () {
         //return 1;
     }
     else{
-        printf( "Other board not set" );
+        printf( "Other board not set\n" );
         //return 0;
     }
     system( "clear" );
